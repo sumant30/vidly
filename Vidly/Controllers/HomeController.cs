@@ -6,8 +6,10 @@ using System . Web . Mvc;
 
 namespace Vidly . Controllers
 {
+    [RoutePrefix ( "Home" )]
     public class HomeController : Controller
     {
+        [Route]
         public ActionResult Index ( )
         {
             return View ( );
