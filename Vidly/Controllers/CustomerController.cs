@@ -1,11 +1,7 @@
-﻿using System;
-using System . Collections . Generic;
+﻿using System . Collections . Generic;
 using System . Linq;
-using System . Web;
-using System . Web . Mvc;
 using System . Web . Mvc;
 using Vidly . Models;
-using Vidly . ViewModels;
 
 namespace Vidly . Controllers
 {
@@ -25,6 +21,7 @@ namespace Vidly . Controllers
         }
 
         [Route]
+        [HttpGet]
         // GET: Customer
         public ActionResult Index ( )
         {
@@ -40,6 +37,7 @@ namespace Vidly . Controllers
         }
 
         [Route ( "details/{Id:int}" )]
+        [HttpGet]
         public ActionResult Details ( int id )
         {
             var customer  = _context.Customers.Where(x=> x.Id == id).Select(y=> new CustomerViewModel()
@@ -47,8 +45,9 @@ namespace Vidly . Controllers
                 Id = y.Id,
                 IsSubscribedToNewsLetter = y.IsSubscribedToNewsLetter,
                 MembershipType = y.MembershipType,
-                Name = y.Name
-            } );
+                Name = y.Name,
+                BirthDate = y.BirthDate
+            } ).FirstOrDefault();
 
             if ( customer == null )
                 return HttpNotFound ( );

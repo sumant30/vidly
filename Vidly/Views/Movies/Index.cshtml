@@ -1,0 +1,37 @@
+﻿@model IEnumerable<Vidly.Models.MovieViewModel>
+@{
+    ViewBag . Title = "Movies";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var lstMovie  = Model;
+}
+
+<h2>Customers</h2>
+@if ( !lstMovie . Any ( ) )
+{
+    <p> We don't have any movies yet.</p>
+}
+else
+{
+    <table class="table table-bordered table-hover">
+        <thead>
+            <tr>
+                <th>Movie</th>
+                <th>Genre</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach ( var movie in lstMovie )
+            {
+                <tr>
+                    <td>
+                        @Html.ActionLink( movie . Name , "Details" , "Movies" , new { movie.Id } , null )
+                    </td>
+                    <td>
+                        @movie.Genre
+                    </td>
+                    
+                </tr>
+            }
+        </tbody>
+    </table>
+}
