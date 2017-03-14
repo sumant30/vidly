@@ -1,11 +1,9 @@
 ﻿using System;
 using System . Collections . Generic;
 using System . ComponentModel . DataAnnotations;
-using System . Linq;
-using System . Text;
-using System . Threading . Tasks;
+using Vidly . Models;
 
-namespace Vidly . Models
+namespace Vidly . ViewModels
 {
     public class CustomerViewModel
     {
@@ -16,9 +14,13 @@ namespace Vidly . Models
 
         public MembershipType MembershipType { get; set; }
 
+        [Display(Name="Membership Type")]
         public byte MembershipTypeId { get; set; }
 
-        [DisplayFormat ( DataFormatString = "{0:MM/dd/yyyy}" )]
+        public IEnumerable<MembershipType> MembershipTypes { get; set; }
+
+        [Display(Name="Date of Birth")]
+        [DisplayFormat ( DataFormatString = "{0:dd MMM yyyy}" , ApplyFormatInEditMode = true )]
         public DateTime? BirthDate { get; set; }
     }
 }

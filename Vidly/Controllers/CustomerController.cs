@@ -2,10 +2,11 @@
 using System . Linq;
 using System . Web . Mvc;
 using Vidly . Models;
+using Vidly . ViewModels;
 
 namespace Vidly . Controllers
 {
-    [RoutePrefix ( "Customer" )]
+    [RoutePrefix ( "customer" )]
     public class CustomerController : Controller
     {
         private ApplicationDbContext _context;
@@ -36,24 +37,74 @@ namespace Vidly . Controllers
             return View ( lstCustomers );
         }
 
-        [Route ( "details/{Id:int}" )]
+        [Route ( "edit/{Id:int}" )]
         [HttpGet]
         public ActionResult Details ( int id )
         {
+            var membershipTypes = _context.MembershipTypes.ToList();
+
             var customer  = _context.Customers.Where(x=> x.Id == id).Select(y=> new CustomerViewModel()
             {
                 Id = y.Id,
                 IsSubscribedToNewsLetter = y.IsSubscribedToNewsLetter,
-                MembershipType = y.MembershipType,
+                MembershipTypeId=y.MembershipTypeId,
                 Name = y.Name,
                 BirthDate = y.BirthDate
             } ).FirstOrDefault();
 
+            customer . MembershipTypes = membershipTypes;
+
             if ( customer == null )
                 return HttpNotFound ( );
             else
-                return View ( customer );
+                return View ("Create",customer );
 
+        }
+
+        [HttpGet]
+        [Route ( "create" )]
+        public ActionResult Create ( )
+        {
+            var membershipTypes = _context.MembershipTypes.ToList();
+            var customerVM = new CustomerViewModel { MembershipTypes = membershipTypes };
+            return View ( customerVM );
+        }
+
+        [HttpPost]
+        [Route ( "create" )]
+        public ActionResult Save ( CustomerViewModel customerVM )
+        {
+            if ( ModelState . IsValid )
+            {
+                Customer customerEntity = null;
+               
+
+                if ( customerVM . Id != 0 )
+                {
+                    var customer  = _context.Customers.FirstOrDefault(x=> x.Id == customerVM.Id);
+                    customer . Name = customerVM . Name;
+                    customer . MembershipTypeId = customerVM . MembershipTypeId;
+                    customer . BirthDate = customerVM . BirthDate;
+                    customer . IsSubscribedToNewsLetter = customerVM . IsSubscribedToNewsLetter;
+                }
+                else
+                {
+                    customerEntity = new Customer ( )
+                    {
+                        Name = customerVM . Name ,
+                        BirthDate = customerVM . BirthDate ,
+                        MembershipTypeId = customerVM . MembershipTypeId ,
+                        IsSubscribedToNewsLetter = customerVM . IsSubscribedToNewsLetter
+                    };
+                    _context . Customers . Add ( customerEntity );
+                }
+
+                
+                _context . SaveChanges ( );
+
+               
+            }
+            return RedirectToAction ( "Index" );
         }
     }
 }
